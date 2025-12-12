@@ -63,7 +63,7 @@
 |        |----------- 05_Debugging.pdf
 |        |----------- 06_WiFi_Sniffer.pdf
 
-| // After Installation
+| // After installing packages from toolchain -> you can directly paste the heap_buddy.c in the folder structure mentione below. 
 | // Paste the heap_buddy.c code in the folder: bl602_iot_sdk/components/freertos/portable/MemMang/ (along with all heap_* files)
 |----- ProjectIOT 
 |        |----------- bl602_iot_sdk
