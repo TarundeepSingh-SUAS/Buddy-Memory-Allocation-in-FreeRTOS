@@ -50,7 +50,7 @@ Keywords:Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic 
 | // Conference paper and Report
 |----- G3_Buddy_Conference_Paper.pdf
 |----- G3_Report.pdf
-</pre>pre>
+</pre>
 
 ------------------------------------------------------------
 #Installation steps for running heap_buddy.c
@@ -69,7 +69,7 @@ Keywords:Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic 
 |----- ProjectIOT 
 |        |----------- bl602_iot_sdk
 |                       |----------- ...
-</pre>pre>
+</pre>
   
 ------------------------------------------------------------
 #Setting up heap_buddy.c
@@ -84,7 +84,6 @@ Keywords:Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic 
 ------------------------------------------------------------
 <pre>
 | // Refer to  02_Compiling_and_Flashing.pdf for running programs in PineCone BL602
-</pre>pre>
+</pre>
 
-------------------------------------------------------------
 ------------------------------------------------------------
