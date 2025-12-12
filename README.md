@@ -77,7 +77,7 @@
 | // Now in order to select heap_buddy.c, go the folder : bl602_iot_sdk/components/freertos/bouffalo.mk
 | // Now go to COMPONENT_OBJS := $(...), here you see portable/MemMang/heap_bl602.c 
 | // change heap_bl602.c to heap_5.c or heap_buddy.c as per test requirement
-</pre>pre>
+</pre>
 ------------------------------------------------------------
 #Running FreeRTOS application
 ------------------------------------------------------------
