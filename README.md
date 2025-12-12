@@ -1,4 +1,7 @@
 # Buddy-Memory-Allocation-in-FreeRTOS 💾📜
+## Acknowledgments
+I would like to express my sincere gratitude to **Prof. Ralf Colmar Staudemeyer (PhD)** for such a wonderful project. I really appriciate your valuable guidance, constructive feedback, and continuous support throughout this project.  
+I would also like to thank **Herr. Tobias Tefke** for his assistance, helpful discussions, and technical support during the implementation and evaluation phases of this work.
 
 ## The aim of this project is: 🎯
     "FreeRTOS is the operating system that runs on the PineCone. Its memory allocation algorithms mainly 
