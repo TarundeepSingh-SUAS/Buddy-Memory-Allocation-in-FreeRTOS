@@ -1,6 +1,6 @@
-# Buddy-Memory-Allocation-in-FreeRTOS
+# Buddy-Memory-Allocation-in-FreeRTOS 💾📜
 
-## The aim of this project is:
+## The aim of this project is: 🎯
     "FreeRTOS is the operating system that runs on the PineCone. Its memory allocation algorithms mainly 
      base on simple dynamic allocation algorithms. The goal of this proposed project is writing a memory 
      allocator that works according to the buddy memory algorithm. This allocator should be written as 
