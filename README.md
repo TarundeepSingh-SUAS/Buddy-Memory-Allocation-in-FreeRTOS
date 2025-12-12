@@ -37,9 +37,9 @@
 |        |----------- concept-explanation.txt // read before understanding heap_buddy.c, review of concepts used in writing heap_buddy.c
 |
 |----- tests_programms // test cases run for comparing heap_5.c and heap_buddy.c performance
-|        |----------- suas_app_buddy_test1 // Fragmentation behaviour
-|        |----------- suas_app_buddy_test2 // Free block merging
-|        |----------- suas_app_buddy_test3 //  Allocation efficiency
+|        |----------- suas_app_buddy_test1.zip // Fragmentation behaviour
+|        |----------- suas_app_buddy_test2.zip // Free block merging
+|        |----------- suas_app_buddy_test3.zip //  Allocation efficiency
 |
 | // Contain screenshots of the results 
 |----- test1
