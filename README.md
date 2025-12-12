@@ -1,6 +1,6 @@
-  # Buddy-Memory-Allocation-in-FreeRTOS
+# Buddy-Memory-Allocation-in-FreeRTOS
 
-The aim of this project is:
+## The aim of this project is:
     "FreeRTOS is the operating system that runs on the PineCone. Its memory allocation algorithms mainly 
      base on simple dynamic allocation algorithms. The goal of this proposed project is writing a memory 
      allocator that works according to the buddy memory algorithm. This allocator should be written as 
@@ -8,7 +8,7 @@ The aim of this project is:
      functions free and malloc. Hence any FreeRTOS applications should be able to run with the allocator
      without changes. Implementing calloc and realloc is a plus."
 
-ABSTRACT:
+## ABSTRACT:
      Dynamic memory allocation is an important building block in embedded operating systems with small RAM,
      real-time constraints, and fragmentation which impact system’s reliability. The Buddy Memory Allocation 
      algorithm was originally introduced by Donald Knuth as a power-of-two blocksplitting and coalescing (here 
@@ -24,8 +24,7 @@ ABSTRACT:
      and practical needs of embedded real-time applications. This project address to fill this gap by providing a practical model
      implementation on PineCone BL602 (FreeRTOS). 
      
-Keywords:Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic memory allocation; fragmentation; 
-      real-time determinism; block coalescing; performance evaluation; memory management
+### Keywords:Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic memory allocation; fragmentation; real-time determinism; block coalescing; performance evaluation; memory management
 
 
 ------------------------------------------------------------
