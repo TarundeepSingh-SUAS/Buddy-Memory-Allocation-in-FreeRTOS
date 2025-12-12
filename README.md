@@ -27,9 +27,11 @@ ABSTRACT:
 Keywords:Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic memory allocation; fragmentation; 
       real-time determinism; block coalescing; performance evaluation; memory management
 
+
 ------------------------------------------------------------
 #Main Work
 ------------------------------------------------------------
+<pre>
 |
 |----- algorithm
 |        |----------- heap_buddy.c // code 
@@ -48,11 +50,12 @@ Keywords:Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic 
 | // Conference paper and Report
 |----- G3_Buddy_Conference_Paper.pdf
 |----- G3_Report.pdf
-
+</pre>pre>
 
 ------------------------------------------------------------
 #Installation steps for running heap_buddy.c
 ------------------------------------------------------------
+<pre>
 |----- Toolchain
 |        |----------- 01_Installation.pdf
 |        |----------- 02_Compiling_and_Flashing.pdf
@@ -66,19 +69,22 @@ Keywords:Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic 
 |----- ProjectIOT 
 |        |----------- bl602_iot_sdk
 |                       |----------- ...
-
+</pre>pre>
+  
 ------------------------------------------------------------
 #Setting up heap_buddy.c
 ------------------------------------------------------------
+<pre>
 | // Now in order to select heap_buddy.c, go the folder : bl602_iot_sdk/components/freertos/bouffalo.mk
 | // Now go to COMPONENT_OBJS := $(...), here you see portable/MemMang/heap_bl602.c 
 | // change heap_bl602.c to heap_5.c or heap_buddy.c as per test requirement
-
+</pre>pre>
 ------------------------------------------------------------
 #Running FreeRTOS application
 ------------------------------------------------------------
+<pre>
 | // Refer to  02_Compiling_and_Flashing.pdf for running programs in PineCone BL602
-
+</pre>pre>
 
 ------------------------------------------------------------
 ------------------------------------------------------------
