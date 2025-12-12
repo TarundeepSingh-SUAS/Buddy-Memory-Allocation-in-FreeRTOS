@@ -1,0 +1,332 @@
+        Buddy Memory Concepts
+
+Section 0: The naming conventions
+<Section_0>
+FreeRTOS uses very consistent naming conventions, and PineCone (BL602) follows the same rules.
+These prefixes are not random — each one tells you "the data type" or "purpose" of a variable/function.
+Below is the complete list used in FreeRTOS, including v, x, pv, px, and many more.
+
+            1. Function Name Prefixes
+| Prefix |                          Meaning                           |      Example                |
+|---------------------------------------------------------------------------------------------------|
+| v      | function returns void                                      | vTaskDelay(), vPortFree()   |
+| x      | function returns a BaseType_t (usually int) or status code | xTaskCreate(), xQueueSend() |
+| ux     | function returns UBaseType_t (unsigned int)                | uxTaskGetNumberOfTasks()    |
+| pv     | function returns void* (pointer to anything)               | pvPortMalloc()              |
+| pc     | function returns char*                                     | pcTaskGetName()             |
+| ul     | function returns unsigned long                             | ulTaskNotifyTake()          |
+|---------------------------------------------------------------------------------------------------|
+
+            2. Variable / Pointer Prefixes
+| Prefix |                 Meaning           |    Example                    |
+|----------------------------------------------------------------------------|
+| x      | a structure or base type variable | xBlockSize, xTaskStatus       |
+| ux     | unsigned version of x             | uxQueueLength                 |
+| px     | pointer to structure or type      | pxNextFreeBlock, pxCurrentTCB |
+| pv     | generic void* pointer             | pvParameters, pvReturn        |
+| pc     | pointer to char                   | pcWriteBuffer                 |
+| puc    | pointer to unsigned char          | pucTopOfStack, pucHeap        |
+| pul    | pointer to unsigned long          | pulValue                      |
+| ps     | pointer to signed type            | psBuffer                      |
+|----------------------------------------------------------------------------|
+
+             3. Variable Type Prefixes
+
+| Prefix | Meaning         | Example        |
+|-------------------------------------------|
+| c      | char            | cRxByte        |
+| uc     | unsigned char   | ucPriority     |
+| s      | signed 16-bit   | sStack         |
+| us     | unsigned 16-bit | usPortStack    |
+| l      | long            | lValue         |
+| ul     | unsigned long   | ulTotalRunTime |
+|-------------------------------------------|
+
+            4. Common FreeRTOS-specific prefixes
+
+| Prefix     | Meaning                                    | Where used         |  Example                 |
+|---------------------------------------------------------------------------------------------------------|
+| config     | compile-time configuration macro           | FreeRTOSConfig.h   | configTOTAL_HEAP_SIZE    |
+| port       | port layer (MCU-specific)                  | portable/ folder   | portTICK_PERIOD_MS       |
+| tsk        | task-related internal variables            | task.c             | tskRUNNING_CHAR          |
+| prv        | private / static function (not public API) | internal functions | prvHeapInit()            |
+| mtCOVERAGE | memory test coverage                       | testing builds     | mtCOVERAGE_TEST_MARKER() |
+|---------------------------------------------------------------------------------------------------------|
+
+            5. Most Common Prefixes Explained Simply
+
+| Prefix | Meaning             | In simple words                          |
+|-------------------------------------------------------------------------|
+| v      | void function       | “Function returns nothing.”              |
+| x      | int/status return   | “Function returns a success or failure.” |
+| pv     | pointer void return | “Returns an address to some memory.”     |
+| px     | pointer variable    | “This is a pointer.”                     |
+| uc     | unsigned char       | “8-bit unsigned value.”                  |
+| ul     | unsigned long       | “32-bit or 64-bit depending on MCU.”     |
+| prv    | private             | “Internal helper function.”              |
+| config | compile-time config | Defined in FreeRTOSConfig.h              |
+|-------------------------------------------------------------------------|
+
+Ques. Why this matters for your Buddy Allocator
+Ans.  We need these prefixes for naming your structures and functions. For example, in  `heap_buddy.c`:
+      Example:
+
+|   static uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
+|   
+|   typedef struct BuddyBlock
+|   {
+|       size_t xBlockSize;
+|       struct BuddyBlock *pxNext;
+|   } BuddyBlock_t;
+|   static void prvInitBuddyHeap( void );
+|   void *pvPortMalloc( size_t xWantedSize );
+|   void vPortFree( void *pv ) ;
+
+What each means:
+    - ucHeap → unsigned char array for heap
+    - pxNext → pointer to next block
+    - pvPortMalloc → returns void pointer, FreeRTOS API
+    - prvInitBuddyHeap → private internal function
+</Section_0>
+
+Section 1: The MACRO: "MPU_WRAPPERS_INCLUDED_FROM_API_FILE"
+<Section_1>
+<QuickOverview>
+In heap_buddy.c code you can see:
+
+|    #define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+|    #include "FreeRTOS.h"
+|    #include "task.h"
+|    #undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+
+FreeRTOS supports two modes basically:
+    1. Normal FreeRTOS: (what PineCone uses)
+    2. FreeRTOS with MPU (Memory Protection Unit — used on ARM Cortex-M with privilege levels)
+
+When using "MPU mode", FreeRTOS wraps API functions in special versions for protection purpose. For example:
+
+|   pvPortMalloc → MPU_pvPortMalloc
+|   vTaskDelay → MPU_vTaskDelay
+|   xTaskCreate → MPU_xTaskCreate
+
+In order to provide protection, these wrappers check:
+    - Calling task privilege
+    - Access permissions
+    - Memory regions
+    - Kernel safety rules
+
+BUT… heap files (heap_1.c to heap_5.c, heap_bl602.c) should "never use the MPU wrapper versions" because these heap functions
+are "internal OS functions', not user API. So this macro tells FreeRTOS:
+
+> “Do NOT replace API names with MPU versions while parsing this file.”
+> 
+
+Without this macro:
+pvPortMalloc()" would get renamed to "MPU_pvPortMalloc()" by task.h
+        → Bad, breaks internal kernel logic
+
+With this macro:
+Renaming is disabled, and heap code keeps original names.
+</QuickOverview>
+
+
+Ques. What does “MPU wrapper” mean?
+Ans. MPU stands Memory Protection Unit (Only available on ARM Cortex-M3/M4/M7 with privilege system). The MPU is used to:
+    - Protect RAM regions
+    - Prevent user tasks from accessing kernel memory
+    - Prevent errant tasks from overwriting heap
+    - Allow user tasks to run unprivileged
+FreeRTOS has two versions of each API function:
+
+| Normal version  | MPU version        |
+|--------------------------------------|
+| vTaskDelay()    | MPU_vTaskDelay()   |
+| xQueueCreate()  | MPU_xQueueCreate() |
+| pvPortMalloc()  | MPU_pvPortMalloc() |
+|--------------------------------------|
+
+"MPU version" checks permissions → then calls the "normal version".
+
+Ques. How renaming works inside FreeRTOS
+Ans. Inside `task.h`, you will find something like:
+
+|   #ifndef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+|       #define pvPortMalloc MPU_pvPortMalloc
+|       #define vTaskDelay MPU_vTaskDelay
+|        ...
+|   #endif
+
+Meaning: If "this macro is NOT defined", rename API calls:
+
+|   pvPortMalloc → MPU_pvPortMalloc
+
+If "this macro IS defined", do NOT rename.
+
+Ques. Why heap files define this macro?
+Ans. The heap files (`heap_1.c`, `heap_2.c`, `heap_4.c`, heap_5 etc.) are "kernel internals", so:
+        - They MUST always call real kernel functions
+        - They MUST NOT call MPU-wrapped API
+    Thus they do:
+
+|   #define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+|   #include "task.h"
+|   #undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+
+This protects the file from accidental renaming.
+</Section_1>
+
+Section 2: Alignment
+<Section_2>
+Ques. What is Alignment?
+Ans. Alignment means:
+
+> Memory addresses must be divisible by a required number (4, 8, or 16)
+> 
+Example:
+    If alignment = 8
+    Valid addresses are:
+        || 0, 8, 16, 24, 32, 40, 48 ...
+    Invalid addresses:
+        ||2, 5, 11, 17, 23 ...
+
+Ques. Why CPUs need alignment?
+Ans. Because many CPUs (including RISC-V, ARM) can only access certain data types at aligned addresses.
+    Examples:
+        | Data Type | Minimum Alignment |
+        |-------------------------------|
+        | char      | 1 byte            |
+        | short     | 2 bytes           |
+        | int32     | 4 bytes           |
+        | int64     | 8 bytes           |
+        | double    | 8 or 16 bytes     |
+        |-------------------------------|
+
+If you store a 64-bit number (8 bytes) starting at address 5:
+    -CPU will crash
+    -Or slow performance
+    -Or unaligned access fault
+That is why FreeRTOS ensures heap blocks start aligned.
+
+Ques. What alignment macros exist in FreeRTOS?
+Ans.  The most important macros:
+        "portBYTE_ALIGNMENT"
+This is the required alignment value (set per port):
+Common values:
+    |1  → no alignment needed
+    |4  → align to 32-bit
+    |8  → align to 64-bit   
+    |16 → align to AVX/NEON boundary
+On PineCone (RISC-V BL602), it is usually "8".
+
+    "portBYTE_ALIGNMENT_MASK"
+This produces a mask for alignment.
+If alignment = 8
+Then:
+    |portBYTE_ALIGNMENT = 8
+    |portBYTE_ALIGNMENT_MASK = 7       (0b00000111)
+If alignment = 16
+Then:
+    |portBYTE_ALIGNMENT_MASK = 15      (0b00001111)
+
+    "Alignment Macro in code"
+You often see:
+|   x & ~portBYTE_ALIGNMENT_MASK
+This expression aligns address DOWN to nearest boundary.
+
+Ques. How alignment math works?
+Ans. Goal: Turn any address into a neat divisible address.
+
+    "Align UP"
+Formula:
+|   aligned = (x + (align - 1)) & ~(align - 1)
+If align = 8:
+    align-1 = 7 = 0b111
+    ~7 = 0b11111000
+Example:
+    Address = 13
+    Align = 8
+    Step 1: add (8-1)
+    13 + 7 = 20
+Step 2: mask lower bits:
+    20 & (~7)
+    20 & 0b11111000 = 16
+So 13 becomes "16" (aligned).
+
+    "Align DOWN"
+
+Formula:
+|   aligned = x & ~(align - 1)
+
+Example:
+    13 & (~7)
+        13 = 00001101
+        ~7 = 11111000
+        ----------------
+        Result = 00001000 = 8
+    13 becomes "8" (aligned lower boundary)
+
+Ques. How FreeRTOS aligns heap start
+Ans.
+Code:
+|   pucAlignedHeap =
+|        (uint8_t*)(
+|            ((portPOINTER_SIZE_TYPE)&ucHeap[ portBYTE_ALIGNMENT ])
+|           & (~portBYTE_ALIGNMENT_MASK)
+|       );
+
+Breakdown:
+1. &ucHeap[portBYTE_ALIGNMENT]:  moves the pointer forward a little (safety buffer)
+2. & ~portBYTE_ALIGNMENT_MASK":  forces alignment.
+
+Example with numbers
+Assume heap starts at address:
+|   0x100003 → not aligned (divisible by 8?)
+|   0x100003 % 8 = 3 → not aligned
+Now apply the mask:
+|   ~7 = 0xFFFFFFF8
+|   0x100003 & 0xFFFFFFF8 = 0x100000
+So aligned start becomes:
+|   0x100000  (divisible by 8)
+
+Ques. What about aligning block sizes?
+Ans. FreeRTOS ALSO aligns block sizes, not just addresses.
+Example from heap_2.c:
+|   if (xWantedSize & portBYTE_ALIGNMENT_MASK)
+|   {
+|     xWantedSize += (portBYTE_ALIGNMENT - (xWantedSize & portBYTE_ALIGNMENT_MASK));
+|   }
+Meaning: If you want 13 bytes and alignment is 8:
+|   13 % 8 = 5
+|   8 - 5 = 3
+|   Add 3 bytes
+|   New size = 16
+Everything must be:
+    - aligned block size
+    - aligned block header
+    - aligned block memory start
+
+Ques. How YOU will use this in your buddy allocator
+Ans. Your buddy allocator MUST:
+    1. Align heap start
+    2. Align requested allocation sizes
+    3. Ensure each block is a power of 2
+    4. Align block headers
+Typical buddy block size:
+|   8, 16, 32, 64, 128, 256 ...
+
+Since buddy works on powers of 2, alignment is naturally handled.
+
+But you still must align:
+|   requested_size = align_up(requested_size, portBYTE_ALIGNMENT);
+
+Ques. SIMPLE SUMMARY (very important)
+Ans.
+| Macro                     | Meaning                                    | Example (align=8) |
+|--------------------------------------------------------------------------------------------|
+| portBYTE_ALIGNMENT        | Required CPU alignment                     | 8                 |
+| portBYTE_ALIGNMENT_MASK   | Mask for alignment                         | 7 (0b111)         |
+| x & ~mask                 | Align down                                 | 13 → 8            |
+| (x+mask) & ~mask          | Align up                                   | 13 → 16           |
+| Used in heaps             | Ensure memory starts and sizes are aligned | All heaps         |
+|--------------------------------------------------------------------------------------------|
+</Section_2>

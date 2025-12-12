@@ -1,0 +1,44 @@
+Report Section: Free Block Merging Behavior
+
+We evaluated the free-block merging behavior of FreeRTOS heap_5 and our buddy allocator by allocating and freeing memory blocks in a pattern that intentionally produces fragmentation.
+
+heap_5.c Results
+
+After freeing alternate blocks (creating holes), heap_5.c produced irregular free block sizes (for example, 1040 bytes) and failed to merge blocks completely. Even after freeing all allocated blocks, the heap did not return to a fully contiguous region. Two or more free blocks remained, and the smallest block was still fragmented (40 KB). This demonstrates incomplete merging and persistent external fragmentation, which is a known limitation of linked-list allocators.
+
+Buddy Allocator Results
+
+In contrast, the buddy allocator behaved as expected according to the buddy algorithm. All free blocks remained power-of-two sized (e.g., 256 B, 1024 B, 4096 B, 65536 B), and the system maintained a clean hierarchical structure. After freeing all blocks, the largest free block returned to the maximum allowed block size for the region (64 KB), and all other free blocks were correctly aligned and structured. This demonstrates deterministic merging and zero external fragmentation, confirming that the buddy allocator restores memory to a predictable state.
+
+Conclusion
+
+The free-block merging test clearly shows that:
+
+heap_5.c partially merges blocks but cannot fully coalesce all fragments
+
+Buddy allocator completely restores block structure and prevents external fragmentation
+
+Buddy merges are deterministic, whereas heap_5 merges depend on block layout and linked-list ordering
+
+This validates the correctness of our buddy allocator and demonstrates a key advantage over the default FreeRTOS memory allocator.
+
+⭐ 3. Key Points You Can Present to Professor
+🟥 heap_5.c
+
+Produces irregular free block sizes (1040 B, 40944 B, etc.)
+
+Leaves multiple free blocks even after all memory is freed
+
+Shows incomplete merging
+
+Memory becomes messier, harder for large allocations later
+
+🟩 buddy allocator
+
+Free blocks always power-of-two
+
+Merging is correct and deterministic
+
+After freeing everything, memory returns to a clean tree structure
+
+Perfect merging using XOR buddy logic

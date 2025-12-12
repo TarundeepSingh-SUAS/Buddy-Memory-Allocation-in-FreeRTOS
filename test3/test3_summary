@@ -1,0 +1,61 @@
+The allocation efficiency test performed on BL602 clearly demonstrates the deterministic behavior of the buddy memory allocator. Using a hardware microsecond timer, we measured the time required for 20 allocations of random sizes.
+
+In the heap_5.c implementation, allocation time varied significantly, ranging from 3 µs to 13 µs. This variation increases with fragmentation because heap_5.c must linearly scan a list of free blocks to find a suitable fit, resulting in unpredictable timing.
+
+In contrast, the buddy allocator produced highly stable allocation times between 4 µs and 7 µs. Because free blocks are organized in separate lists per block order, the allocator can directly access the correct list, making the time required effectively constant.
+
+Free operations show the same pattern: heap_5.c varies between 3–11 µs, while the buddy allocator remains consistently within 5–7 µs.
+
+This confirms that the buddy system not only reduces fragmentation but also delivers predictable memory allocation timing, a crucial requirement for real-time embedded systems running FreeRTOS.
+
+
+
+2. What these results PROVE (for your report)
+
+You can write this directly in your document:
+
+📘 Allocation Efficiency: heap_5 vs Buddy Allocator
+heap_5.c
+
+Uses a linear scan through free blocks to find a suitable block.
+
+Time required grows with:
+
+number of free blocks
+
+fragmentation
+
+size being allocated
+
+This leads to non-deterministic allocation time.
+
+Results ranged from 3 µs to 13 µs in our tests.
+
+This unpredictability makes heap_5.c less suitable for real-time systems.
+
+Buddy Allocator (our implementation)
+
+Uses pre-sorted free lists by block size.
+
+Always looks directly in the relevant list → O(1) or O(log n).
+
+Allocation and free times remain almost constant, even under fragmentation.
+
+Results were stable around 4–7 µs, with extremely small jitter.
+
+This deterministic behavior is ideal for RTOS and time-critical tasks.
+
+Conclusion
+
+The buddy allocator demonstrates superior allocation efficiency compared to heap_5.c.
+It provides:
+
+Predictable timing
+
+Consistent performance
+
+Lower worst-case latency
+
+Better behavior under fragmentation
+
+These characteristics make it a better memory allocator for FreeRTOS on BL602.
