@@ -1,10 +1,10 @@
 /*    Schmalkalden University of Applied Science 
             Project IOT & Group 3 
-Developers: Tarundeep The Leader (part time developer)
+Developers: Tarundeep The Leader 
             Soham The Gatherer
             Naveen bedridden
             Anushaka 404
-
+            Anjana NULL
             
  * heap_buddy.c - Multi-region buddy allocator for FreeRTOS (heap_5-style, inspired from heap_bl602 too)
  *      Quick summary of work done
