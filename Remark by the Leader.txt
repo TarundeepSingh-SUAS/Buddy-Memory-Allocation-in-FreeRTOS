@@ -31,7 +31,7 @@ As a developer he did a fabulous job.
 
 3. Anjana Bavukkan Parakkandy (319472)
 
-Role: --- 
+Role: --- (ex-editor)
 Contributions: NULL
 
 Special Remarks by Leader: 
@@ -40,7 +40,7 @@ Later she tried to contribute in development but was not active in meetings. Fai
 
 4. Naveen Jose (319929)
 
-Role: ---
+Role: --- (ex-developer)
 Contributions: NULL
 
 Special Remarks by Leader:
@@ -49,9 +49,10 @@ Special Remarks by Leader:
 
 5. Anushaka Vasant Hurali (319416)
 
-Role: ---
+Role: --- (ex-developer)
 Contributions: NULL
 
 Special Remarks by Leader:
  She was in India from starting of this project till 20th December, 2025. In starting she was active in discussion but from October end till 20th December, 2025, she does not make any contact and did not show any interest in contributing in project. Her contribution is till this date null.
+
 
