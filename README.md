@@ -3,7 +3,7 @@
 I would like to express my sincere gratitude to **Prof. Ralf Colmar Staudemeyer (PhD)** for such a wonderful project. I really appriciate your valuable guidance, constructive feedback, and continuous support throughout this project.  
 I would also like to thank **Herr. Tobias Tefke** for his assistance, helpful discussions, and technical support during the implementation and evaluation phases of this work.
 
-## The aim of this project is: 🎯
+## The aim of this project: 🎯
     "FreeRTOS is the operating system that runs on the PineCone. Its memory allocation algorithms mainly 
      base on simple dynamic allocation algorithms. The goal of this proposed project is writing a memory 
      allocator that works according to the buddy memory algorithm. This allocator should be written as 
