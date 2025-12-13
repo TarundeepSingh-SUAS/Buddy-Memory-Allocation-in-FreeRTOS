@@ -11,7 +11,7 @@ I would also like to thank **Herr. Tobias Tefke** for his assistance, helpful di
      functions free and malloc. Hence any FreeRTOS applications should be able to run with the allocator
      without changes. Implementing calloc and realloc is a plus."
 
-## ABSTRACT:
+## ABSTRACT: 📜
      Dynamic memory allocation is an important building block in embedded operating systems with small RAM,
      real-time constraints, and fragmentation which impact system’s reliability. The Buddy Memory Allocation 
      algorithm was originally introduced by Donald Knuth as a power-of-two blocksplitting and coalescing (here 
@@ -31,7 +31,7 @@ I would also like to thank **Herr. Tobias Tefke** for his assistance, helpful di
 
 
 ------------------------------------------------------------
-#Main Work
+#Main Work 💪
 ------------------------------------------------------------
 <pre>
 |
@@ -55,7 +55,7 @@ I would also like to thank **Herr. Tobias Tefke** for his assistance, helpful di
 </pre>
 
 ------------------------------------------------------------
-#Installation steps for running heap_buddy.c
+#Installation steps for running heap_buddy.c 🔃
 ------------------------------------------------------------
 This toolchain was provided by Herr. Tobias Tefke. Please follow his pdfs for installation
 <pre>
@@ -75,7 +75,7 @@ This toolchain was provided by Herr. Tobias Tefke. Please follow his pdfs for in
 </pre>
   
 ------------------------------------------------------------
-#Setting up heap_buddy.c
+#Setting up heap_buddy.c 👍
 ------------------------------------------------------------
 <pre>
 | // Now in order to select heap_buddy.c, go the folder : bl602_iot_sdk/components/freertos/bouffalo.mk
@@ -83,12 +83,12 @@ This toolchain was provided by Herr. Tobias Tefke. Please follow his pdfs for in
 | // change heap_bl602.c to heap_5.c or heap_buddy.c as per test requirement
 </pre>
 ------------------------------------------------------------
-#Running FreeRTOS application
+#Running FreeRTOS application ✅
 ------------------------------------------------------------
 <pre>
 | // Refer to  02_Compiling_and_Flashing.pdf for running programs in PineCone BL602
 </pre>
 
 ------------------------------------------------------------
-
+�🤷‍♂️
 For any inquiries or doubts, do contact me via mail: tarundeep2906@gmail.com
