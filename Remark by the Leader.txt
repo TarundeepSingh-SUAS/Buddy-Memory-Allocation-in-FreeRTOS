@@ -1,0 +1,52 @@
+
+1. Tarundeep Singh (319294)
+
+Role: Leader & Editor & Lead Developer
+Contributions:
+1. All the editor tasks
+2. Major code for heap_buddy.c
+3. Setting up GitHub repository. Each and every file was build by me
+4. Presentation making and presentation
+5. Strategizing the plans for project and leading to its completion
+6. Implementing all the code and running all customer apps
+7. Testing and debugging code
+
+
+2. Soham Jalandar Mote (319923)
+
+Role: Developer 
+Contributions:
+1. Gathering resources which were used in project
+2. Writing pseudocode for malloc, free, calloc, alloc functions
+3. Writing test cases later improved by me
+
+Special Remarks by Leader:
+He was actively working in this project. Never missed a single deadline.  
+He bring positive vibes to this project.
+As a developer he did a fabulous job.
+
+3. Anjana Bavukkan Parakkandy (319472)
+
+Role: --- 
+Contributions: NULL
+
+Special Remarks by Leader: 
+She was ex-editor of this project. Even though content for proposal was provided, she was not able to put content in the proposal template. During this time she pushed the work to the deadline. I submitted 2 times her work but it was not accepted. Later I do the proposal again and rewrite the content and then submitted it.
+Later she tried to contribute in development but was not active in meetings. Failed to produce any results. Later when she was provided content (written material, output result, summaries, new research papers) again for Conference paper and given 7 days to do. She failed to do it. She started ignoring messages and did not share any progress during this time. i have to call her and ask to share progress, again she show no interest and told she will do it on deadline day. So she was removed from editor post.
+
+4. Naveen Jose (319929)
+
+Role: ---
+Contributions: NULL
+
+Special Remarks by Leader:
+ He was supposed to be developer for this project. He helped in setting up environment for FreeRTOS but failed to do that. Later it was done by Soha Jalandar Mote. Later he went for internship and was not able to contribute in the project. 
+
+
+5. Anushaka Vasant Hurali (319416)
+
+Role: ---
+Contributions: NULL
+
+Special Remarks by Leader:
+ She was in India from starting of this project till 20th December, 2025. In starting she was active in discussion but from October end till 20th December, 2025, she does not make any contact and did not show any interest in contributing in project. Her contribution is till this date null.
