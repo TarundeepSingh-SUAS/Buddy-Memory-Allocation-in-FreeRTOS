@@ -1,3 +1,7 @@
+             Internet of Things 2025
+   Group 3: Buddy Memory Allocator in FreeRTOS
+
+List of members, their role and contributions.
 
 1. Tarundeep Singh (319294)
 
@@ -50,3 +54,4 @@ Contributions: NULL
 
 Special Remarks by Leader:
  She was in India from starting of this project till 20th December, 2025. In starting she was active in discussion but from October end till 20th December, 2025, she does not make any contact and did not show any interest in contributing in project. Her contribution is till this date null.
+
