@@ -23,7 +23,7 @@ I would also like to thank **Herr. Tobias Tefke** for his assistance, helpful di
      allocator can reduce the gap between theoretical models and practical needs of embedded real-time applications. This project aim to fill this gap by providing a practical 
      model implementation on PineCone BL602 (FreeRTOS). 
      
-    ### Keywords:Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic memory allocation; fragmentation; real-time determinism; block coalescing; performance            evaluation; memory management
+    Keywords:Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic memory allocation; fragmentation; real-time determinism; block coalescing; performance            evaluation; memory management
 
 
 ------------------------------------------------------------
