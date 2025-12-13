@@ -1,0 +1,21 @@
+Discussion
+
+|| 🔃
+|| Report + Conference Paper
+
+The results of these experiments have provided quite sharp contrasts between the inherent fragmentation behaviour of FreeRTOS's default heap management scheme, heap_5.c, and that of the proposed Buddy Memory Allocator, heap_buddy.c. Along all three axes of evaluation-fragmentation, precision in block merging, and allocation efficiency-the Buddy allocator showed more predictable and deterministic behaviour. These attributes provide key leverage for real-time embedded systems, where accuracy in timing and stability in memory are indispensable.
+
+The efficient memory management is
+
+
+Fragmentation Behaviour:
+
+Test 1 provided the greatest contrast between the two allocators. Whereas heap_5.c created memory layouts that were irregular and increasingly fragmented, the Buddy allocator managed to maintain clean power-of-two block structures without any evidence of external fragmentation. This is significant because over time, fragmentation diminishes available memory, but also can lead to unpredictable and spurious failures in allocation requests. On long-running devices such as IoT nodes or embedded controllers, this type of memory unpredictability could lead to system instability or task crashes. The deterministic nature of Buddy's structure ensures that even after heavy dynamic allocation usage, the heap returns to a well-defined state.
+
+Merging Behaviour:
+
+Test 2 highlights that the Buddy allocator provides perfect recursive merging of free blocks: the maximal possible contiguous region is always recovered when all allocations are freed. In contrast, heap_5.c exhibited incomplete merging: several smaller blocks remained even after all allocations were freed. This behaviour is a good indication that list-based allocators cannot reliably maintain heap integrity under fragmentation stress. For those FreeRTOS tasks-such as repeatedly allocating and then freeing memory for message buffers, stream buffers, or temporary computation arrays-the Buddy system is a better choice when it comes to long-term reliability.
+
+Timing of Allocation: 
+
+Timing results reinforce these findings. The Buddy allocator allowed for tight timing bounds, with minimum allocation/free times exhibiting minimal variation from the maximum. This predictability is key in real-time scheduling, where the execution of memory operations should remain within known execution windows. heap_5.c exhibited higher timing variability due to linear scanning; this situation only gets worse as fragmentation increases. This timing jitter introduces uncertainty into a system’s WCET and may potentially violate real-time constraints. Practical implications for FreeRTOS: In practice, especially for IoT, robotics, sensor platforms, and low-power controllers, being able to maintain predictable behavior regarding memory is often more important than the absolute speed of allocation. The Buddy allocator not only reduces fragmentation but also adds to system stability, safety, and long-term reliability. These results hint that it might constitute a viable alternative to the existing FreeRTOS allocators, particularly in environments where dynamic memory is unavoidable. Overall, this discussion confirms that the Buddy Memory Allocator addresses the major limitations present in heap_5.c: deterministic timing, structured heap layout, and resilience to fragmentation are properties that make it very well aligned with modern embedded systems' needs as far as dynamic memory usage combined with real-time guarantees is concerned.

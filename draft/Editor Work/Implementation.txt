@@ -1,0 +1,189 @@
+Implementation
+
+|| Remark: Completed + Cited + No need to change ✅
+|| Report + Conference Paper
+
+This project has built heap_buddy.c file as replacement to already existing memory management files in FreeRTOS. In order to design heap_buddy.c file, we had studied all the heap files provided by FreeRTOS for memory management purpose (heap_1.c to heap_5.c) [6]. This helps us to understand the naming conventions, which are used to write the code in FreeRTOS. Also helps to setup header files and MPU (Memory Protection Unit) wrapper files. 
+
+#include <stdint.h> 
+#include <stddef.h>
+#include <string.h>
+#define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+#include "FreeRTOS.h"
+#include "task.h"
+#undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+#if ( configSUPPORT_DYNAMIC_ALLOCATION == 0 )
+    #error "heap_buddy.c requires configSUPPORT_DYNAMIC_ALLOCATION == 1"
+#endif
+
+The above code structure is must have and is common in all heap schemas (heap_1.c to heap_5.c). 
+
+Now begins the implementation of this project. There are 4 major phases of this project. Each phase is followed one after another. They are as followed:
+
+
+Phase 1: Defining heap region, Block Structure and Metadata layout
+
+PineCone BL602 provides around 276 KB of usable SRAM. This is the physical memory pool which is used by FreeRTOS objects like tasks, queues, timers, etc. Although FreeRTOS provides 5 different heap schemas but none has implemented structured coealescing or buddy based merging. Thus, this creates a requirement for the implementation of new heap module (heap_buddy.c). 
+
+First, we need to define some constants which configure the buddy system behaviour like minimum block size possible to largest size possible. Also how many heap regions are there. (Note: Here U at end of numbers mean unsigned)
+
+a) BUDDY_MIN_ORDER: Smallest block of memory possible for allocation
+#define BUDDY_MIN_ORDER      ( 5U )      /* 2^5  = 32 bytes blocks*/
+
+b) BUDDY_MAX_ORDER: Largest block of memory possible for allocation
+#define BUDDY_MAX_ORDER      ( 18U )     /* 2^18 = 256 KB blocks max  (Largest block of memory)*/
+
+c) BUDDY_MAX_REGIONS: maximum number of memory regions 
+#define BUDDY_MAX_REGIONS    ( 4U )
+
+
+Then, comes the designing of the block structure. This is inspired from heap_5.c. 
+
+typedef struct BuddyBlock
+{
+    struct BuddyBlock *pxNext;   // pointer to another buddy block
+    uint8_t            ucOrder;  // log2(block_size) Example: if byte size is 32 , ucOrder = 5*/
+    uint8_t            ucRegion; // index into xRegions[] Index into xRegions[] array → tells which region 
+				 //                                          this block belongs to. 
+} BuddyBlock_t;
+
+
+Then we defined heap region. Here a region means one contiguous memory area handled with a single buddy tree. Each region has its own buddy tree.
+typedef struct BuddyRegion
+{
+    uint8_t     *pucBase;                          /* Start address (aligned)   */
+    size_t       xSize;                            /* Total bytes in this tree  */
+    uint8_t      ucMinOrder;                       /* Smallest block order      */
+    uint8_t      ucMaxOrder;                       /* Largest  block order      */
+    BuddyBlock_t *pxFreeLists[BUDDY_MAX_ORDER + 1U]; /* One list per order    */
+} BuddyRegion_t;
+
+Now each memory block in buddy system is in the power of 2 (2^n) by its definition. And n is the order of that memory block (ucOrder). This BuddyBlock is the metadata for the allocated memory size. Think it as a box. Where empt space is memory size and the name slip which has address is the metadata.  This all comes together (Metadata + Memory Needed). 
+
+Remark: To reduce overheads, which are important in IoT devices, metadata was stored before the allocated block or encoded in a compact header. Free blocks of all sizes were kept in free lists, which were singly linked lists for constant-time insertion.
+
+
+Phase 2: Helper functions
+
+This phase is dedicated for carrying out task like buddy address calculation, coalescing logic, etc. But the most important one is setting up alignment. Alignment means memory addresses must be divisible by a required number (4, 8, or 16). many CPUs (including RISC-V, ARM) can only access certain data types at aligned addresses. If you store a 64-bit number (8 bytes) starting at address 50, then CPU will crash or performance will slow down or unaligned access fault error will occur. That is why FreeRTOS ensures heap blocks start aligned. That is why portBYTE_ALIGNMENT macro becomes the most important macro. Its quite useful in setting up the memory block alignment.
+
+The core feature of heap_buddy.c is its deterministic calculation of the buddy blocks. For an allocated block (base address adr and block size blockSize) is computed using XOR. This XOR operation allows instant computation of adjacent buddy blocks without scanning whole memory. This leads to fast splitting and merging.
+
+buddy = addr XOR blockSize
+
+Along these major helping functions, additional helping functions were implemented like: 
+
+prvRoundUpToPowerOfTwo( size_t x ) -> responsible for rounding memory to nearest power of two number
+static BuddyRegion_t *prvFindRegionForPtr( uint8_t *puc, uint8_t *pucRegionIndex ) -> Find which region a given pointer belongs to
+
+static void prvInsertFreeBlock( BuddyRegion_t *pxRegion, BuddyBlock_t  *pxBlock ) ->  Insert a block into the free list for its order (LIFO). 
+
+static BuddyBlock_t *prvPopFreeBlock( BuddyRegion_t *pxRegion, uint8_t order ) -> Remove and return a block from a free list for a given order
+
+static BuddyBlock_t *prvRemoveBuddyFromFreeList( BuddyRegion_t *pxRegion, uint8_t order, uintptr_t uxBuddyAddr ) ->  Search a free list for a block at a specific address, removing it if found.
+
+void vPortDefineHeapRegions( const HeapRegion_t * const pxHeapRegions ) -> This is called by the application to tell FreeRTOS “here are my heap memory ranges".
+
+
+Phase 3. Writing the logic for malloc, free, calloc and realloc
+
+a) malloc (pvPortMalloc( size_t xWantedSize )) 
+This function is responsible for reserving the specific amount of memory requested. It returns the starting address of that memory block. If there is an error in memory allocation, it returns NULL value. 
+
+The pseudocode is as follow:
+1. If requested memory size (xWantedSize) is zero:  return NULL else go to step 2
+2. Add header + alignment to the requested size: totalSize = align(requestSize + BLOCK_HEADER_SIZE)
+3. Find smallest block size (power of 2) that can fit totalSize: requiredOrder = findOrder(totalSize)
+4. Search free lists starting from requiredOrder
+    order = requiredOrder
+    while order <= MAX_ORDER:
+        if freeList[order] is not empty:
+            break
+        order = order + 1
+5. If no block found → memory full → return NULL
+   or if order > MAX_ORDER: return NULL
+6. Remove the found block from its free list: block = removeBlockFromFreeList(order)
+7. Split blocks until we reach requiredOrder
+    while order > requiredOrder:
+        order = order - 1
+        buddy = splitBlock(block, order)
+        addToFreeList(buddy, order)
+8. Mark block as allocated:
+    block.isFree = false
+    block.sizeOrder = requiredOrder
+9. Return pointer to usable memory (after header):
+    return addressAfterHeader(block)
+
+b) free (vPortFree(ptr))
+This function is responsible for giving memory back to system for usage. It does not delete data, it just marks the memory as available. This function also helps in preventing memory leak.
+
+The pseudocode is as follow:
+1. If pointer is NULL (ptr == NULL) → nothing to free else goes to step 2
+2. Get the block header stored before the pointer
+    block = getBlockHeader(ptr)
+    order = block.sizeOrder
+3. Mark the block as free
+    block.isFree = true
+4. Try to merge with buddy repeatedly
+    while order < MAX_ORDER:
+        buddy = findBuddy(block, order)
+        // If buddy doesn't exist or is not free → stop merging
+        if buddy == NULL or buddy.isFree == false:
+            break
+        //Remove buddy from free list because we are merging it
+        removeFromFreeList(buddy, order)
+        // Merge block and buddy to form bigger block
+        block = merge(block, buddy)
+        // Increase the order (bigger block)
+        order = order + 1
+5. Add the final merged block back to free list
+    addToFreeList(block, order)
+	    return
+
+c) calloc (pvPortCalloc(size_t n, size_t size))
+Contiguous Memory Alloocation or calloc is responsible to allocate memory for multiple items and fills all memory woth 0. Thus giving a clean empty block of memory where everything starts at zero.
+When a program uses heap for long time. A lot of memory blocks are used again and again. Thus malloc() may contain old data but calloc() always has cleaned empty data.
+The pseudocode is as follow:
+1. Calculate total required bytes: totalSize = numElements * elementSize
+2. If zero bytes requested: return NULL else goes to step 3
+3. Allocate memory using buddy malloc: ptr = pvPortMalloc(totalSize)
+4. If allocation failed → return NULL else goes to step 5
+5. Set all allocated bytes to 0: memset(ptr, 0, totalSize)
+6. Return pointer to zero-initialized block
+    return ptr
+
+d) realloc (pvPortRealloc(void *pvOld, size_t xNewSize))
+Re-Allocate Memory or realloc is responsible for resizing existing memory if possible. It preserves the data and only move the memory block if necessary.
+1. If oldPtr is NULL → behave like malloc: return pvPortMalloc(newSize) else goes to step 2
+2. If newSize is 0 → free old block and return NULL
+    if newSize == 0:
+        vPortFree(oldPtr)
+        return NULL
+3. Get metadata of old block
+    oldBlock = getBlockHeader(oldPtr)
+    oldUsableSize = blockUsableSize(oldBlock)  
+4. If the old block is already big enough → return same pointer else:
+    if newSize <= oldUsableSize:
+        return oldPtr
+5. Allocate a new larger block:
+    newPtr = pvPortMalloc(newSize)
+6. Allocation failed → return NULL (oldPtr is still valid)
+    if newPtr == NULL:
+        return NULL
+7. Copy old data to the new block: copyBytes(newPtr, oldPtr, oldUsableSize)
+8. Free the old block: vPortFree(oldPtr)
+9. Return the new pointer: return newPtr
+
+Thus we have designed the heap_buddy.c which has following functions: 
+	void *(*pvPortMalloc)( size_t xSize );
+	void (*vPortFree)( void *pv );
+	size_t (*xPortGetFreeHeapSize)( void );
+	size_t (*xPortGetMinimumEverFreeHeapSize)( void );
+well these are the standard signature for any FreeRTOS heap implementation. Thus heap_buddy.c matches function signature and is capable of running any FreeRTOS application without having any error.
+
+Phase 4 Implementing heap stats similar to heap_5.c and critical sections used to ensure thread safety
+
+The final phase is dedicated to help the developer for debugging purpose and also to monitor memory usage during system execution. It provides runtime memory statistics which is similar to heap_5.c. FreeRTOS critical sections were used around all allocation and deallocation paths for tasks using taskENTER_CRITICAL() and taskEXIT_CRITICAL(). Using these, race conditions are avoided that otherwise would be experienced if different tasks as well as interrupts were to access pvPortMalloc() and vPortFree() concurrently. These features make the allocator more user-friendly, opaque, and robust for use in real-time embedded systems.
+
+
+ 

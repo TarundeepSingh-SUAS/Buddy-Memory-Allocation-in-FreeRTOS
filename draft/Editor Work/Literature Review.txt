@@ -1,0 +1,52 @@
+Literature Review
+
+|| Remark: Completed + Cited + No need to change ✅
+|| Report + Conference Paper
+
+This section highlights definition and concepts related to buddy memory algorithm. This includes allocator design, fragmentation behaviour, and how it can designed so that it is suitable for embedded systems. This section includes various research work related to buddy memory algorithm: theoretical aspect, improvements, and designs. This helps us to design buddy memory algorithm which is compactible with FreeRTOS.
+
+2.1 Dynamic Memory Allocation in Operating Systems
+
+Dynamic memory allocation is a foundational component of operating systems, responsible for managing memory requests efficiently while minimizing fragmentation. The research paper "Dynamic Storage Allocation: A Survey and Critical Review" [5] emphasize that allocators must balance speed with memory efficiency, as fragmentation and poor allocator design significantly impact long-running systems. Traditional allocators such as first-fit and best-fit often suffer from external fragmentation and unpredictable allocation times, making them unsuitable for real-time or embedded environments [5]. Simulation studies also demonstrate that linked-list and bitmap-based allocators degrade significantly as memory becomes fragmented, leading to poorer long-term stability [7]. Because embedded systems operate under strict memory and timing constraints, these limitations highlight the need for more structured and deterministic allocation methods.
+
+2.2 Buddy memory Algorithm: definition, logic and basic diagram
+
+The Buddy Memory Allocation Algorithm is a dynamic way of managing a fixed-size region of memory (memory array). Its core idea lies in divide and conquer technique. Here each block size is in power of 2, for example 32 64 128 256 and so on. When a running program request a memory block, it repeatedly divides (reducing into half size) memory array into blocks that are of the same size (called “buddies”) until a block large enough to satisfy an allocation request is found. When the program finished its execution or return the memory, this system is responsible to make that block available again for use. Also it checks whether its buddy block is also free. If both are free, they are merged back into a larger block. This makes the buddy system fast, easy to maintain, and effective at reducing fragmentation in real-time embedded systems like FreeRTOS. The diagram 1 shows basic idea of buddy memory allocation algorithm. If the program request for 255 Kb memory (imaginary value for explanation purpose), it starts with biggest available memory size (here 1024 Kb). And divides into half size until it finds best fit. Here when it reaches 256 Kb block, it divides again into 128 Kb size but it does not fit (128 < 255). So it allocates the 256 Kb block which is best fit.
+
+
+2.3 Classical Buddy System and Its Variants
+
+The Buddy System, as developed by Knuth and greatly formalized by Peterson and Norman, manages memory through the continual splitting and merging of blocks in fixed power-of-two sizes [1], [2]. Its main mechanism is that with a free block and its corresponding "buddy" free, they can be combined to make a larger block, reducing external fragmentation and making reuse of memory more predictable.
+
+Peterson and Norman summarize the classical binary buddy, Fibonacci buddy, and weighted buddy systems, pointing out that each variant relieves block size constraints in order to trade internal fragmentation against implementation complexity [2]. It was also demonstrated that weighted buddy reduces internal fragmentation by providing additional allowable block sizes; this is of course at the increased cost in metadata overhead [8].  Table 1 summarizes comparative findings drawn from Peterson & Norman [2] and other empirical results.
+
+| Type                | Internal Fragmentation | External Fragmentation | Typical Waste | Stability |
+| ------------------- | ---------------------- | ---------------------- | ------------- | --------- |
+|   Binary Buddy      | Moderate               | Low                    | 25–40%        | Stable    |
+|   Fibonacci Buddy   | Low                    | Moderate               | ~30–35%       | Variable  |
+|   Weighted Buddy    | Low                    | High                   | ~35–45%       | Unstable  |
+
+Table 1: Comparison of Buddy Algorithm Types
+
+Peterson and Norman further demonstrate that Binary Buddy is practical to implement in C[2], making it an appropriate candidate for integration into the FreeRTOS kernel. 
+
+"Thus binary Buddy System is selected for this project as per Peterson and Norman work"
+
+2.4 Fragmentation, Performance, and Simulation Studies
+
+Many studies compare buddy systems with other dynamic memory allocators. Wilson et al. describe how the patterns of fragmentation vary between different allocators, and how structured coalescing, as occurs in a buddy system, leads to far more predictable behavior than free-list allocators do [5]. Comparisons based on simulation studies demonstrate that buddy systems have far less external fragmentation than sequential-fit algorithms and tend to have more predictable memory use during long-running workloads [7].
+
+As might be expected, Knuth’s seminal analysis also confirms that internal fragmentation—resulting from requests rounded up to the nearest block size—remains the biggest source of inefficiency in buddy allocation, but overall system behavior remains robust compared to unstructured allocators [1].
+
+
+2.5 Improvements to Buddy Systems
+
+Many researchers have suggested various enhancements to improve the speed of the allocation and to reduce fragmentation. One of the significant theoretical enhancements on classical buddy allocation was done by Brodal, Demaine, and Munro, in which they proposed an improved buddy system that can achieve a worst-case O(1) time for allocations and deallocations by using auxiliary metadata structures  [4].
+
+Lazy buddy systems, such as the DELAY-2 algorithm by Barkley and Lee, reduce the frequency of coalescing operations to enhance real-world performance at the same time as providing guaranteed bounded worst-case merge costs [3]. In their experiments, they measured a gain in speed of up to 33%, compared with the standard buddy system.
+
+Other refinements include Linux memory management optimizations, where modifications to the buddy mechanism reduce allocation failures in highly fragmented environments [9].
+
+2.6 Buddy System as a Divide-and-Conquer Strategy
+
+There is a kind of similarity between "buddy memory allocation algorithm" and "divide and conquer". Like divide and conquer it splits memory block (problem as in divide and conquer)into two equal size buddies block (two problems). This form a tree structure, which helps in finding block, splitting it, freeing it and merging it. This recursive decomposition aligns naturally with FreeRTOS and other real-time systems, which require deterministic, logarithmic-time memory operations and predictable behavior under constrained memory conditions [10].

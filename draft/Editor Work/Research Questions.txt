@@ -1,0 +1,14 @@
+Research Questions
+
+|| Remark: Completed + Cited + No need to change ✅
+|| Report + Conference Paper
+
+The focus of this paper is in the following questions:
+
+a. What is the most suitable memory allocator design in FreeRTOS?
+b. What type of Buddy memory allocation algorithm is suited for FreeRTOS?
+c. How does Buddy memory allocation compare to the performance of existing dynamic memory allocation strategies?
+d. How to design Buddy Memory Allocator which implements malloc(), calloc, realloc, and free() functions?
+
+The above questions helps in formulating this project's problem statement. This problem statement addresses one or all of the questions mentioned above:
+"To design and develop a Buddy Memory Allocator for FreeRTOS, be predictable in timing, have less fragmentation, and efficiently uses limited embedded memory without affecting current applications."

@@ -1,0 +1,27 @@
+Abstract
+
+|| Remark: Completed + Cited + No need to change ✅
+|| Report + Conference Paper
+
+Abstract: Dynamic memory allocation is an important building block in embedded operating systems with small RAM, real-time constraints, and fragmentation which impact system's reliability. The Buddy Memory Allocation algorithm was originally introduced by Donald Knuth as a power-of-two block-splitting and coalescing (here it means to join two blocks of memory together) scheme for dynamic storage allocation [1] -provides a theoretically efficient model but has seen only limited adoption within kernels like Linux. In this project, Buddy Memory Allocation for FreeRTOS was designed and implemented such that it extends the FreeRTOS memory API- malloc(), free(), calloc() and realloc(). With the goal to offer predictable logarithmic allocation time and significantly lowered fragmentation.
+
+Our approach extends the traditional buddy system analysis [2] and recent augmentations that investigate coalescing efficiency and fragmentation behavior [3], [4]. This memory allocator is designed for resource constrained systems. It exhibits improved memory predictability, higher space utilization, and stable behavior under load compared to the default FreeRTOS heap implementations (heap_1 to heap_5)[6]. Prior studies of dynamic allocation [5] shows that a well engineered buddy allocator can reduce the gap between theoretical models and practical needs of embedded real-time applications. This project address to fill this gap by providing a practical model implementation on PineCone BL602 (FreeRTOS).
+
+Keywords: buddy memory allocation algorithm, FreeRTOS, embedded systems, dynamic memory allocation, fragmentation, real-time determinism, block coalescing, performance evaluation, and memory management.
+
+
+------------------------------------------------------------------
+
+\begin{abstract}
+    
+		\textbf{Abstract: }Dynamic memory allocation is an important building block in embedded operating systems with small RAM, real-time constraints, and fragmentation which impact system's reliability. The Buddy Memory Allocation algorithm was originally introduced by Donald Knuth as a power-of-two block-splitting and coalescing (here it means to join two blocks of memory together) scheme for dynamic storage allocation [1] -provides a theoretically efficient model but has seen only limited adoption within kernels like Linux. In this project, Buddy Memory Allocation for FreeRTOS was designed and implemented such that it extends the FreeRTOS memory API- malloc(), free(), calloc() and realloc(). With the goal to offer predictable logarithmic allocation time and significantly lowered fragmentation.	
+	      
+        Our approach extends the traditional buddy system analysis [2] and recent augmentations that investigate coalescing efficiency and fragmentation behavior [3], [4]. This memory allocator is designed for resource constrained systems. It exhibits improved memory predictability, higher space utilization, and stable behavior under load compared to the default FreeRTOS heap implementations ((\texttt{heap\_1} to \texttt{heap\_5}) )[6]. Prior studies of dynamic allocation [5] shows that a well engineered buddy allocator can reduce the gap between theoretical models and practical needs of embedded real-time applications. This project address to fill this gap by providing a practical model implementation on PineCone BL602 (FreeRTOS).
+    
+	    \textbf{Keywords:}Buddy memory allocation algorithm; FreeRTOS; embedded systems; dynamic memory allocation; fragmentation; real-time determinism; block coalescing; performance evaluation; memory management
+    \end{abstract}
+	
+The GitHub repository which contains this project's implementation and code is publicly accessible.\footnote{\url{https://github.com/TarundeepSingh-SUAS/Buddy-Memory-Allocation-in-FreeRTOS.git}}
+
+
+

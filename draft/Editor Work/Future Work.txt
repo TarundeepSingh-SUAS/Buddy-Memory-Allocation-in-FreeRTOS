@@ -1,0 +1,28 @@
+Future Work
+
+|| Remark: Completed + Cited + No need to change ✅
+|| Report + Conference Paper
+
+We have successfully implemented heap_buddy.c in PineCone BL602 FreeRTOS.But there is always room for improvement. We can still improves memory allocation and deallocation predictability and reduces fragmentation within FreeRTOS on the BL602 platform. There are several opportunities which is discussed here. The Future work section of this project is to give a new direction to this project, if someone wants to work with memory management schema in embedded systems:
+
+1 Performance Testing on another embedded system hardware:
+
+We have tested heap_buddy.c only on PineCone BL602. But it is not tested on another hardwares like:
+	a) ARM Cortex-M microcontrollers,
+	b) ESP32-class devices,
+	c) Other RISC-V SoCs.
+
+Implementing this would improve heap_buddy.c logic. The goal here would be to produce a generalise heap_buddy.c which runs on all embedded systems hardware without any need of changing in its logic.
+
+2 Support for Lazy and Adaptive Coalescing [3]: 
+
+This is something we did not implement in this project. The classical buddy system is designed to do immediate coalescing, which is although predictable but it may also leads to unnecessary merge operations under certain workloads. Integrating lazy coalescing techniques, such as the DELAY-2 algorithm or watermark-based strategies, to reduce overhead while still ensuring long-term memory stability is quite an impressive goal  [3]. This would reduce workload for the processor.
+
+3 Fragmentation Monitoring and Debug Tools: 
+
+A monitoring tool is always a good tool that all developers especially debuggers want in their toolset. Developing runtime monitoring tools such as heap visualizers, fragmentation statistics, or diagnostic hooks will help in better understanding of not only heap_buddy.c but also other heap management schemas [6]. This would help developers to better understand allocation patterns and track memory health over time. Such tools would be valuable for debugging long-running or memory-intensive embedded applications. 
+
+4 Memory-Aware Task Scheduling :
+
+A long-term direction is integrating the buddy allocator with FreeRTOS’s scheduler, enabling  memory-aware scheduling policies. Here whenever memory is requested all other tasks are suspended. it is very crucial in order to avoid having corrupt memory. But a task scheduler can ensure that tasks are prioritized not only by time constraints but also by memory fragmentation impact. 
+

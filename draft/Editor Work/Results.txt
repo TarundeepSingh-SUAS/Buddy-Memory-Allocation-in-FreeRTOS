@@ -1,0 +1,121 @@
+Tests and Results
+
+|| Remark: Completed + Cited + No need to change ✅
+|| Report + Conference Paper
+
+We were able to successfully run FreeRTOS applications provided in GitHub Repository. We were able to successfully run several applications like suas_app_helloworld, suas_app_freertos_message_queues, suas_app_freertos_tasks, etc. This shows heap_buddy.c can run smoothly FreeRTOS applications without any need to change logic.
+Now, comes the comparison. How heap_buddy.c outperforms heap schemas like heap_5.c. This is a quick overview of the results.
+
+|Test Category         | heap_5.c                           | heap_buddy.c                                 |   Winner   |
+|-----------------------------------------------------------------------------------------------------------------------| 
+|Fragmentation         | Irregular, accumulates over time   | Predictable, low fragmentation               |   Buddy    |
+|Free Block Merging    | Merges only adjacent nodes,        | Guaranteed recursive merging of true buddies |   Buddy    |
+|                      |   incomplete merging               |                                              |            |
+|Allocation Efficiency |Linear search → slow, unpredictable | O(1)/O(log N) splitting → fast, deterministic|   Buddy    |
+|-----------------------------------------------------------------------------------------------------------------------|
+
+Thus this clearly shows that heap_buddy.c outperform heap_5.c. The test cases are discussed in detailes below.
+The parameters which we chose for comparison are:
+1. Fragmentation behaviour
+2. Free block merging
+3. Allocation efficiency
+
+
+
+
+
+1. Fragmentation behaviour
+
+This experiment was conducted in order to test and examine the dynamic memory allocation nature of FreeRTOS's heap_5.c and heap_buddy.c. This experiments has following parameters for comparison:
+	a) Largest free block
+	b) Smallest free block
+	c) Total free heap
+	d) Number of free blocks
+The table below shows the result comparison (here B means bytes): 
+
+|Metric	             |heap_5.c	       | heap_buddy.c	         |      Winner                            |
+|---------------------------------------------------------------------------------------------------------|
+|Largest free block  |169,744 B(random)| 32,768 B (power-of-two) |  Depends (heap_5 larger but fragmented)|
+|Smallest free block |528 B (irregular)| 256 B (2⁸)	         |  Buddy                                 | 
+|Fragmentation type  |External         | Internal only	         |  Buddy                                 |
+|Determinism	     |Poor	       | Excellent	         |  Buddy                                 |
+|Merge behavior	     |Incomplete       | Perfect (XOR merge)	 |  Buddy                                 |
+|Long-duration       |safety	       | Medium	High	         |  Buddy                                 |
+|---------------------------------------------------------------------------------------------------------|
+
+Buddy Memory Algorithm has:
+	1.Predictable power-of-two blocks
+	2.Perfect merging
+	3.Low external fragmentation
+	4.Clean heap layout
+
+heap_5.c produces:
+	1. Irregular block sizes
+	2. Higher external fragmentation
+	3. Non-deterministic merging
+	4. Messy free block layout
+
+
+
+2. Free Block Merging Behavior
+
+We tested the merging of free blocks in a fragmentation-causing manner. This experiments has following parameters for comparison (observed after allocating then freeing blocks):
+	1. Largest free block
+	2. Smallest free block
+	3. Number of free blocks
+
+The table below shows the result comparison 
+
+|    Behavior	                 |      heap_5.c      |	   buddy allocator     |
+|------------------------------------------------------------------------------|
+|Largest block after full free   |  Not maximum	      |   Always max for region|
+|Smallest block	                 |  Irregular	      |   Power-of-two         |
+|Number of free blocks	         |  > 1 (fragmented)  |	  Low / stable         |
+|Merge accuracy	                 |  Partial	      |   Perfect              |
+|Fragmentation	                 |  High	      |   Very Low             |
+|Determinism	                 |  Low	              |   High                 |
+|------------------------------------------------------------------------------|
+
+The observations were as followed:
+
+heap_5.c
+
+In heap_5.c, there were irregular sizes of free blocks (for instance, 1040 bytes). Also no complete merging of blocks occurred. Even when all allocated blocks were removed, the heap did not return to a fully contiguous region. Two or more free blocks remained, and the smallest block was still fragmented (40 KB). This shows an incomplete merging and external fragmentation. This is a one of the limitation of linked-list allocators.
+
+heap_buddy.c
+
+On the other hand, the buddy allocation algorithm performed as expected. All free memory blocks were kept as powers of two (for example, 256 bytes, 1024 bytes, 4096 bytes, 65536 bytes), and everything stayed in a tidy hierarchical order. After releasing all memory blocks, the largest memory block became the highest allowed block size for that area, which was 64 KB, and all other memory blocks were properly aligned. This proves that there's no fragmentation and that memory has been put back in a deterministic way.
+
+
+
+3. Allocation Efficiency
+
+The allocation efficiency test for heap_buddy.c performed on BL602 shows deterministic behavior. We measured the time, using the Hardware-Microsecond Timer, for 20 memory allocations of random size. The following tables show the results for this test.
+
+Allocation Times Comparison:
+
+|Allocator    | Min Time |  Max Time | Avg Time |   Behavior                                          |
+|-----------------------------------------------------------------------------------------------------|
+|heap_5.c     |	 3 µs	 |    13 µs  | ~6–7 µs	| Non-deterministic, varies depending on fragmentation|
+|heap_buddy.c |	 4 µs	 |     7 µs  | ~5–6 µs	| Very stable and deterministic                       |
+|-----------------------------------------------------------------------------------------------------|
+
+Free Times Comparison:
+
+|Allocator   | Min Time| Max Time | Avg Time |    Behavior           |
+|--------------------------------------------------------------------|
+|heap_5.c    |  3 µs   |  11 µs   | ~6 µs    |Non-deterministic      |
+|heap_buddy.c|  5 µs   |  7 µs	  | ~5 µs    |Stable and predictable |
+|--------------------------------------------------------------------|
+
+The observations were as followed:
+
+In the heap_5.c the measured allocations time ranged between 3 µs and 13 µs. This unpredictability rises with fragmentation since heap_5.c relies on linear scanning across a list of free blocks to find a good fit.
+
+In contrast, the buddy allocator generated very stable allocation times between 4 µs and 7 µs. Since free blocks are kept in separate lists per block order, for any given allocation request the allocator can directly access the correct list; the time taken is thus effectively constant.
+
+Free operations follow the same pattern: heap_5.c ranges between 3–11 µs and buddy allocator consistently stays around 5–7 µs.
+
+That confirms that the buddy system not only reduces fragmentation but also provides predictable memory allocation timing. This is a key requirement for real-time embedded systems that are running FreeRTOS.
+
+

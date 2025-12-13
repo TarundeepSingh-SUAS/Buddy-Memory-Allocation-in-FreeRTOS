@@ -1,0 +1,16 @@
+Conclusion
+
+|| Remark: Completed + Cited + No need to change ✅
+|| Report + Conference Paper
+
+The project successfully designed, implemented, and evaluated the "Buddy Memory Allocation Algorithm" as an alternative to the heap schema of FreeRTOS, which runs on the BL602 RISC-V microcontroller platform. The implemented buddy allocator, heap_buddy.c, was successfully integrated with FreeRTOS's memory management interface and showed correct functionality, running all customer_app ackage applications. Experimental results demonstrate that the buddy allocator reduces external fragmentation compared to traditional free-list–based allocators, such as heap_2 and heap_4, while sustaining predictable and stable allocation times-a critical requirement for real-time embedded systems. The natural structured coalescing behavior inherent in the buddy algorithm proved highly effective at preserving larger contiguous regions of memory during long runtimes.
+
+The buddy allocator (heap_buddy.c) was successfully integrated with FreeRTOS's memory management interface. It is able to run all customer_app package applications. Experimental results show that the buddy allocator reduces external fragmentation compared to traditional free-list-based allocators, such as heap_2 and heap_4, while maintaining stable and predictable allocation times-a key factor in real-time embedded systems. It was especially effective at preserving larger contiguous memory regions over longer runtimes.
+
+Beyond empirical performance, this work shows the broader suitability of buddy allocation for microcontroller-class systems such as the PineCone BL602, since their limited RAM requires careful memory usage. It is feasible and beneficial to integrate a buddy allocator into FreeRTOS. This project delivers practical solutions for enhancing memory stability and performance in dynamic embedded applications. In summary, this project demonstrates that the Buddy Memory Allocation Algorithm is a promising and effective approach toward improving memory management in small-footprint real-time operating systems.
+
+
+
+
+
+

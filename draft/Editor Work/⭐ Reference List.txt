@@ -1,0 +1,27 @@
+⭐ Reference List 
+
+[1] D. E. Knuth, The Art of Computer Programming, Volume 1: Fundamental Algorithms, 3rd ed., Addison–Wesley, 1997, pp. 435–441.
+
+[2] J. L. Peterson and T. A. Norman, “Buddy Systems,” Communications of the ACM, vol. 20, no. 6, pp. 421–431, 1977.
+
+[3] S. Barkley and C. Lee, “A Lazy Buddy System Bounded by Two Coalescing Delays per Class (DELAY-2),” in Proc. IEEE Int. Conf. on Computer Design, 1989.
+
+[4] G. S. Brodal, E. D. Demaine, and J. I. Munro, “Fast Allocation and Deallocation with an Improved Buddy System,” BRICS Technical Report, Univ. of Aarhus, 2002.
+
+[5] P. R. Wilson, M. S. Johnstone, M. Neely, and D. Boles, “Dynamic Storage Allocation: A Survey and Critical Review,”
+1995.
+
+[6] FreeRTOS, “Heap memory management (heap_1.c – heap_5.c),” Documentation, FreeRTOS.org. Accessed: 2025-12-09.
+
+[7] F. Karabiber, A. Sertbaş, and A. H. Zaim, “Dynamic Memory Allocator Algorithms: Simulation and Performance Analysis,” Istanbul Univ. J. Elec. & Elec. Eng., vol. 5, no. 2, pp. 1435–1441, 2005.
+
+[8] K. K. Shen and J. L. Peterson, “A Weighted Buddy Method for Dynamic Storage Allocation,” Communications of the ACM, vol. 17, no. 10, pp. 558–563, 1974.
+
+[9] Z. Meng and S. Zhang, “Buddy Algorithm Optimization in Linux Memory Management,” Applied Mechanics and Materials, vol. 423–426, pp. 2746–2750, 2013.
+
+[10] M. R. Q. Tandjung, “Applications of Divide and Conquer in the Buddy System for Efficient Memory Allocations,”
+IF2211 Strategi Algoritma, ITB, 2024.
+
+[11] W. A. Wulf and S. A. McKee, “Hitting the memory wall: Implications of the obvious,” SIGARCH Computer Architecture News, vol. 23, no. 1, pp. 20–24, 1995.
+
+[12] J. Hwang and J. Yoo, “A Memory-Efficient Transmission Scheme for Multi-Homed Internet-of-Things (IoT) Devices,” Sensors, vol. 20, p. 1436, 2020.

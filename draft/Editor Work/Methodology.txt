@@ -1,0 +1,40 @@
+Methodology
+
+|| Remark: Completed + Cited + No need to change ✅
+|| Report + Conference Paper
+
+Every project starts with gathering  resourceful technical literature and previous studies / research works related to the project idea. This project initial step was analyzing and studying memory management in FreeRTOS (heap_1.c to heap_5.c). This helps in writing code as per FreeRTOS coding standards. The prefix in the codes has special meaning. This analysis helped in developing  strategies for developing buddy memory allocator (named: heap_buddy.c). Now comes knowing hardware platform. All experiments were run on the PineCone BL602 RISC-V IoT Development Board. This platform was selected because it represents a realistic IoT-class device where dynamic memory usage, fragmentation, and timing determinism are critical for long-running embedded applications.  
+
+So this project is divided into 4 phases:
+
+Phase 1: Defining heap region, Block Structure and Metadata layout
+We need to identify the boundaries of memory regions, defining block sizes in powers of two, as well as determining metadata (structure and size) that needs to be established  and aligned with memory addresses for allocation and free blocks. The aim is to start writing initial conditions and header files for running heap_buddy.c
+
+Phase 2: Helper functions
+Writing down the functions which helps in the implementation of malloc, free, realloc and calloc. Some examples are calculation of buddy addresses, computation of block orders, size alignments, block splittings, and merging of free buddies. These helper components are the backbone of heap_buddy.c. Here the core logic of memory alignment is also defined.
+
+Phase 3: Writing the logic for malloc, free, calloc and realloc
+The real practical implementation of this project starts from here. The major allocation functions were implemented in this stage. Allocation involved picking the right order of blocks, dividing larger blocks when needed, and updating free lists. De-allocation used recursive buddy merge to keep the heap clean. Calloc and Realloc were layered on top of this to support complete compatibility with FreeRTOS memory interfaces. Writing first pseudocode for matching heap_5.c signature so that heap_buddy.c can run any FreeRTOS applications smoothly.
+
+
+Phase 4: Implementing heap stats and critical sections used to ensure thread safety
+This is written for debugging purpose. Logic for handling critical situation,  avoid conflicts in memory allocation/deallocation due to parallel execution of threads in tasks. 
+
+Then running FreeRTOS's application like suas_app_helloworld, suas_app_freertos_tasks in order to check whether heap_buddy.c can run applications or not.
+
+After this comes the testing. We had considered 3 parameters for testing
+
+1. Fragmentation Behaviour
+Aim: examined how each allocator behaves under heavy dynamic memory usage
+Here, blocks of varying size were deallocated and freed in random patterns. Metrics such as largest free block, smallest free block, number of free blocks, and overall layout determinism recorded.
+
+2. Free Block Merging
+Aim: to see how well each allocator rebuilds contiguous memory
+Here, all memory blocks are allocated and then freed in random order. This helps to know which heap can rebuild the original memory stack or how big memory block it can produce. 
+
+
+3. Allocation Efficiency
+Aim: to see the allocation speed
+The allocation and free operations were measured using the hardware microsecond timer. Over 20 randomly-sized memory blocks are requested.  Both allocators were compared for consistency in timing, minimum and maximum latency, and average performance.
+
+The test were performed and data was collected. This data helps in deciding whether heap_buddy.c is a good fit for FreeRTOS or not. The following sections shows the implementation of methodology followed by future work and open questions.
