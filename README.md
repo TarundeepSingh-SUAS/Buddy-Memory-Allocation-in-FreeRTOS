@@ -91,4 +91,4 @@ This toolchain was provided by Herr. Tobias Tefke. Please follow his pdfs for in
 
 ------------------------------------------------------------
 
-For an inquiry or doubts, do contact me via mail: tarundeep2906@gmail.com
+For any inquiries or doubts, do contact me via mail: tarundeep2906@gmail.com
