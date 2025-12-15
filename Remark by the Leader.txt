@@ -21,12 +21,11 @@ Contributions:
 Role: Developer 
 Contributions:
 1. Gathering resources which were used in project
-2. Writing pseudocode for malloc, free, calloc, alloc functions
-3. Writing test cases later improved by me
+2. Writing test cases later improved by me
 
 Special Remarks by Leader:
 He was actively working in this project. Never missed a single deadline.  
-He bring positive vibes to this project.
+
 
 3. Anjana Bavukkan Parakkandy 
 
@@ -53,6 +52,7 @@ Contributions: NULL
 
 Special Remarks by Leader:
  She was in India from starting of this project till 13th December, 2025. In starting she was active in discussion but from October end till 13th December, 2025, she does not make any contact and did not show any interest in contributing in project. Her contribution is till this date null.
+
 
 
 
